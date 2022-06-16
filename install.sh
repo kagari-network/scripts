@@ -3,7 +3,11 @@ set -e
 
 # check groupadd useradd curl git
 
-if ! command -v nix; then
+if ! command -v nix > /dev/null; then
+    . ~/.nix-profile/etc/profile.d/nix.sh || true
+fi
+
+if ! command -v nix > /dev/null; then
     echo No nix found. Installing...
     mkdir -p -m 0755 /nix
     groupadd nixbld -g 30000 || true
@@ -18,10 +22,6 @@ fnix () {
     nix --experimental-features "nix-command flakes" $@
 }
 
-TMP=$(mktemp -d)
-git clone https://github.com/kagari-network/flakes.git $TMP
-
-cd $TMP
-SYSTEM=$(fnix build .#minimal-system --print-out-paths --no-link)
+SYSTEM=$(fnix build github:kagari-network/flakes#minimal-system --print-out-paths --no-link)
 
 nix-env -p /nix/var/nix/profiles/kagari --set "$SYSTEM"

@@ -10,4 +10,6 @@ if [ ! -d $KAGARI ]; then
     exit 1
 fi
 
+# TODO: private network
+
 $NSPAWN -D /var/empty -x --bind /nix:/nix $INIT
